@@ -109,6 +109,13 @@ A private, single-user Telegram bot:
 5. **A journal only improves you if it's re-read and promoted** into the always-loaded contract/skills. Written-and-forgotten is just logging.
 6. **Make the agent observable before making it more autonomous.** Visibility + a hard gate beat a smarter prompt.
 
+After it went live, a 6-dimension adversarial review added four more:
+
+7. **Bound every external call.** An unbounded `exec`, an un-capped retry backoff, a queue with no rate-limit pause — each turns one bad moment into a stuck or budget-burning system. Timeouts and a circuit-breaker, everywhere.
+8. **Claim work before doing it.** Move a job into a `processing/` slot before running it; on restart, sweep leftovers aside instead of re-running half-committed work. Cheap idempotency.
+9. **Never swallow a failure.** `2>/dev/null || true` on a `git push` means state quietly stops reaching backup. Alert on it — and never blind-delete a job you merely failed to archive.
+10. **Review adversarially or you'll fix ghosts.** A second pass that re-reads the code to *refute* each finding killed about half the review's claims (a "prompt injection" the arg-list path already prevents; a "stale output" the clear-then-validate ordering prevents). The refute step is what makes a review actionable instead of busywork.
+
 ## Stack
 
 OpenAI Codex CLI (gpt-5.5) · Python (`python-telegram-bot`, `mcp`) · systemd timers · git. Runtime in a private repo.
