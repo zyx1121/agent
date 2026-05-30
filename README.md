@@ -17,18 +17,35 @@ This repo is the architecture writeup. The runtime lives in a private repo; ever
 
 Every trigger only **enqueues**. A single `flock`'d dispatcher runs exactly one `codex exec` at a time — the load-bearing guarantee that two agent turns never corrupt the same session.
 
-```
- triggers ──────────────┐
-   alarm     (daily)     │
-   heartbeat (interval)  ├─▶ enqueue ─▶ [ single-runner dispatcher · flock ]
-   telegram  (you)       │                       │  one codex exec at a time
-   sentinels (silent)    │                       ▼
-                         │             codex exec [resume <thread>]
-                         │                       │
-                         │      ┌────────────────┼─────────────────┐
-                         ▼      ▼                ▼                 ▼
-                    reply → TG  memory layer   subagents        git commit
-                               (git · index)  (delegated work)
+```mermaid
+flowchart TB
+    A["⏰ alarm<br/>daily routine"]
+    H["💓 heartbeat<br/>backlog + liveness"]
+    S["🛰️ sentinels<br/>silent unless wrong"]
+    T["💬 telegram<br/>you"]
+
+    A --> Q
+    H --> Q
+    S --> Q
+    T --> Q
+
+    Q[("job queue")] -->|"one turn at a time"| D{{"single-runner dispatcher · flock"}}
+    D --> X["codex exec<br/>resume rolling daily thread"]
+
+    MEM[("memory layer · git<br/>AGENTS.md · MEMORY.md index<br/>semantic / episodic / decisions / STATE / BACKLOG")]
+    MEM -. "auto-load + recall" .-> X
+    X -. "remember · backlog" .-> MEM
+
+    X --> SUB["subagents<br/>delegated heavy work"]
+    SUB -. "summary only" .-> X
+
+    X --> RP["reply → Telegram<br/>md → HTML · live progress"]
+    X --> GIT["git commit + push"]
+
+    DIA["🌙 daily diary"] -. "consolidate + rotate session" .-> MEM
+
+    classDef store fill:#1f2937,stroke:#60a5fa,color:#e5e7eb;
+    class Q,MEM store;
 ```
 
 ## Engine — per-task `codex exec`
