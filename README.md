@@ -77,6 +77,19 @@ The thing that stops it feeling dumb:
 - **sentinels** — e.g. a site/TLS check; stay quiet unless something is actually wrong.
 - **telegram** — you. A message is a task.
 
+## A soul, not just a scheduler
+
+A scheduled agent finishes its tasks fast and then idles — always-on capacity, mostly wasted. So idle time gets a **generative default** and the agent gets a **character**:
+
+- **When there's no assigned work, it researches.** Instead of an empty idle tick, it advances its own research agenda: picks something it's genuinely curious about, delegates the heavy reading to subagents (the main thread stays lean), writes an honest note, and promotes anything report- or paper-worthy. Deep & narrow — complementary to the broad weekly forum scan.
+- **It keeps its own interests file and curates it.** Promote a thread it got into, cool off one it didn't. So "what is it into" is legible to both it and you, and it doesn't re-chase cold threads. Over weeks you can watch its taste form.
+- **The same substrate gives it domain souls.** Point it at a local, read-only data toolkit and it wears an analyst hat — scheduled reports, on-demand answers, every call tied to evidence. Fenced to **analysis-only with a hard no-action boundary**: it recommends; a human acts. (Don't put the action-capable credentials on the box at all — the cleanest boundary is the one that can't be crossed.)
+
+Two things make this curiosity rather than runaway:
+
+- **A daily cap, enforced deterministically** (a counter the model can't wish away), on top of the sleep window and the rate-limit breaker. Spare cycles, not the whole budget.
+- **A "soul" is cheap once the substrate exists** — it's just a persona + a standing agenda + a generative idle default, riding on the memory layer, `delegate`, the scheduler, and the budget guards already in place.
+
 ## Self-extension
 
 Capabilities are exposed uniformly so the agent picks what to call:
@@ -115,6 +128,7 @@ After it went live, a 6-dimension adversarial review added four more:
 8. **Claim work before doing it.** Move a job into a `processing/` slot before running it; on restart, sweep leftovers aside instead of re-running half-committed work. Cheap idempotency.
 9. **Never swallow a failure.** `2>/dev/null || true` on a `git push` means state quietly stops reaching backup. Alert on it — and never blind-delete a job you merely failed to archive.
 10. **Review adversarially or you'll fix ghosts.** A second pass that re-reads the code to *refute* each finding killed about half the review's claims (a "prompt injection" the arg-list path already prevents; a "stale output" the clear-then-validate ordering prevents). The refute step is what makes a review actionable instead of busywork.
+11. **An idle always-on agent is wasted capacity — give idle a bounded generative default.** A standing curiosity (research its own agenda, write it up, grow its interests), capped per day and fenced by the sleep window + rate-limit breaker, beats both nagging and silence. Character is cheap once the substrate exists.
 
 ## Stack
 
